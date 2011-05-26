@@ -1,21 +1,28 @@
 x$(window).on('load',function(){
 	this._targets = [];
+	this._balls = [];
 	this._width = 400;
 	this._height = 400;
 	this._objRadius = 10;
 	this.x = 200;
 	this.y = 10;
-	this._accel = 0;
 	this._xVel = 0;
 	this._yVel = 0;
 	this._elastic = 0.5;
 	this._rotation = 1;
 	
+	// add box targets
 	for(var i=0;i<5;i++){
 		this._targets[i] = new target('target_'+i,Math.floor(Math.random()*400),Math.floor(Math.random()*400),40);
 		targetHtml = '<div id="target_'+i+'" class ="black"></div>';
 		x$('#container')[0].innerHTML += targetHtml;
 	}
+	
+	// add wall targets
+	this._targets.push(new target('leftWall',-400,0,400));
+	this._targets.push(new target('rightWall',400,0,400));
+	this._targets.push(new target('topWall',0,-400,400));
+	this._targets.push(new target('bottomWall',0,400,400));
 	setInterval(updateGame,1000/25);
 	
 	var self = this;
@@ -35,19 +42,33 @@ x$(window).on('load',function(){
 	drawTargets();
 	
 });
-function target(id,x,y,size){
+function target(id,x,y,size,width,height){
 	this.id = id;
 	this.x = x;
 	this.y = y;
+	this.height = height || size;
+	this.width = width || size;
 	this.size = size;
 	this.checkCollision = checkCollision;
+}
+function ball(){
+	this.id = id;
+	this._objRadius = 10;
+	this.x = 200;
+	this.y = 10;
+	this._xVel = 0;
+	this._yVel = 0;	
+	this.checkCollision = checkCollision;
+}
+
+function checkCollision(){
 }
 
 function checkCollision(that) {
 	var left1 = this.x;
-	var right1 = this.x + this.size;
+	var right1 = this.x + this.width;
 	var top1 = this.y;
-	var bottom1 = this.y + this.size;
+	var bottom1 = this.y + this.height;
 	
 	var left2 = that.x;
 	var right2 = that.x + that._objRadius*2;
@@ -64,13 +85,13 @@ function checkCollision(that) {
 			x$('#'+self.id).addClass('blue');
 		});
 		
-		var dx = that.x - this.x; // diff on x axis
-		var dy = that.y - this.y; // diff on y axis
+		var dx = that.x+that._objRadius - this.x-(this.width/2); // diff on x axis
+		var dy = that.y+that._objRadius - this.y-(this.height/2);// diff on y axis
 
 		if(dx >= dy) { // point is on top right half from relativeTo
 			if(dx >= - dy){
 				console.log('EAST');
-				that.x = this.x +this.size;
+				that.x = this.x +this.width;
 				that._xVel = Math.abs(that._xVel);
 				that._xVel *= that._elastic;
 			}else{
@@ -83,7 +104,7 @@ function checkCollision(that) {
 		else { // point is on bottom left half from relativeTo
 			if(dx >= - dy){
 				console.log('SOUTh');
-				that.y = this.y+this.size+(that._objRadius);
+				that.y = this.y+this.height;
 				that._yVel = Math.abs(that._yVel);
 				that._yVel *= that._elastic;
 			}else{ 
@@ -106,45 +127,16 @@ function gravity(){
 }
 
 function collisions(){
-	wallCollisions();
 	targetCollision();
 }
 
-function wallCollisions(){
-	// top edge
-	if(this.y - this._objRadius < 0){
-		this.y = 0 + this._objRadius;
-		this._yVel = Math.abs(this._yVel);
-		this._yVel *= this._elastic;
-	}	
-	// bottom edge
-	if(this.y + this._objRadius > this._height){
-		this.y = this._height - this._objRadius;
-		this._yVel = -Math.abs(this._yVel);
-		this._yVel *= this._elastic;
-	}
-	
-	//left edge
-	if(this.x - this._objRadius < 0){
-		this.x = 0 + this._objRadius;
-		this._xVel = Math.abs(this._xVel);
-		this._xVel *= this._elastic;
-	}
-	
-	// right edge
-	if(this.x + this._objRadius > this._width){
-		this.x = this._width - this._objRadius;
-		this._xVel = -Math.abs(this._xVel);
-		this._xVel *= this._elastic;
-	}
-}
 function updateBall(){
-	scaleX = Math.cos(this._rotation);
-	scaleY = Math.sin(this._rotation);	
-	this.x += (this._xVel*scaleX);
-	this.y += (this._yVel*scaleY);
-	this._xVel *= 0.99;
-	this._yVel *= 0.99;
+	//scaleX = Math.cos(this._rotation);
+	//scaleY = Math.sin(this._rotation);	
+	this.x += (this._xVel);//*scaleX);
+	this.y += (this._yVel);//*scaleY);
+	this._xVel *= 0.999;
+	this._yVel *= 0.999;
 	gravity();
 	collisions();
 	x$('#ball').setStyle("-webkit-transform","translate("+this.x+"px, "+this.y+"px)");
