@@ -1,0 +1,20 @@
+#ball{
+	background: url(ballLarge.png);
+	width: 20px;
+	height:20px;
+	position: fixed;
+}
+
+.black{
+	background: url(boxBlack.png);
+	width: 40px;
+	height:40px;
+	position: fixed;
+}
+
+.blue{
+	background: url(boxBlue.png);
+	width: 40px;
+	height:40px;
+	position: fixed;
+}
