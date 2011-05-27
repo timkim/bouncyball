@@ -2,15 +2,7 @@ x$(window).on('load',function(){
 	this._targets = [];
 	this._balls = [];
 	this._width = 400;
-	this._height = 400;
-	/*
-	this._objRadius = 10;
-	this.x = 200;
-	this.y = 10;
-	this._xVel = 0;
-	this._yVel = 0;
-	*/
-	
+	this._height = 400;	
 	this._rotation = 1;
 	
 	// add box targets and balls
@@ -31,6 +23,11 @@ x$(window).on('load',function(){
 	var self = this;
 	
 	x$('body').on('click',function(e){
+		for(var i=0;i<self._balls.length;i++){
+			self._balls[i]._xVel += Math.floor(Math.random()*20)-10;
+			self._balls[i]._yVel += Math.floor(Math.random()*20)-10;
+		}
+		/*
 		if(e.clientX<self._balls[0].x){
 			self._balls[0]._xVel += 5;
 		}else{
@@ -41,6 +38,7 @@ x$(window).on('load',function(){
 		}else{
 			self._balls[0]._yVel += 10;
 		}
+		*/
 	});
 	
 	drawTargets();
